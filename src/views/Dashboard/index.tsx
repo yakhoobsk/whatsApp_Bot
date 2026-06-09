@@ -278,16 +278,23 @@ const Dashboard = () => {
 
     const handleLogout = async () => {
         try {
-            await dispatch(LogoutUser({})).unwrap();
+            await dispatch(
+                LogoutUser({})
+            ).unwrap();
         } catch (error) {
             console.error(error);
-        } finally {
-            localStorage.clear();
-
-            navigate("/login", {
-                replace: true,
-            });
         }
+
+        localStorage.removeItem(
+            "accessToken"
+        );
+        localStorage.removeItem(
+            "persist:auth"
+        );
+
+        navigate("/login", {
+            replace: true,
+        });
     };
 
     return (

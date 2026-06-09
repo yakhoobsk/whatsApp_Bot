@@ -306,7 +306,9 @@ const Login = () => {
                                     "token"
                                 );
 
-                                navigate("/");
+                                navigate("/", {
+                                    replace: true,
+                                });
                             }
                         }}
                     >

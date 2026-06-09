@@ -1,11 +1,11 @@
 import "./App.css";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense } from "react";
 import {
   BrowserRouter as Router,
   useLocation,
   useRoutes,
-  useNavigate,
+  Navigate,
 } from "react-router-dom";
 
 import routes from "~react-pages";
@@ -16,13 +16,9 @@ import { Spin, Typography } from "antd";
 
 function App() {
   const location = useLocation();
-  const navigate = useNavigate();
   const isOnline = useNetworkStatus();
 
   const { Text } = Typography;
-
-  const [authChecked, setAuthChecked] =
-    useState(false);
 
   const Loader = () => (
     <div
@@ -38,7 +34,6 @@ function App() {
       <Text strong>
         WhatsApp Bot is loading...
       </Text>
-
       <Spin size="large" />
     </div>
   );
@@ -52,41 +47,55 @@ function App() {
   ]);
 
   const cleanPath =
-    location.pathname.replace(/\/+$/, "") ||
-    "/";
+    location.pathname.replace(/\/+$/, "") || "/";
 
-  useEffect(() => {
-    const accessToken =
-      localStorage.getItem("accessToken");
+  // Authentication Check
+  const accessToken =
+    localStorage.getItem("accessToken");
 
-    const isAuthenticated =
-      !!accessToken;
+  const persistedAuth =
+    localStorage.getItem("persist:auth");
 
-    // Not logged in
-    if (
-      !isAuthenticated &&
-      cleanPath !== "/login"
-    ) {
-      navigate("/login", {
-        replace: true,
-      });
+  let authExists = false;
+
+  try {
+    if (persistedAuth) {
+      const parsed = JSON.parse(persistedAuth);
+
+      authExists =
+        !!parsed?.auth &&
+        parsed?.auth !== "null" &&
+        parsed?.auth !== "";
     }
+  } catch (error) {
+    authExists = false;
+  }
 
-    // Already logged in
-    if (
-      isAuthenticated &&
-      cleanPath === "/login"
-    ) {
-      navigate("/", {
-        replace: true,
-      });
-    }
+  const isAuthenticated =
+    !!accessToken && authExists;
 
-    setAuthChecked(true);
-  }, [navigate, cleanPath]);
+  console.log({
+    accessToken,
+    persistedAuth,
+    authExists,
+    isAuthenticated,
+    cleanPath,
+  });
 
-  if (!authChecked) {
-    return <Loader />;
+  // Not logged in -> always go to login
+  if (
+    !isAuthenticated &&
+    cleanPath !== "/login"
+  ) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Already logged in -> don't allow login page
+  if (
+    isAuthenticated &&
+    cleanPath === "/login"
+  ) {
+    return <Navigate to="/" replace />;
   }
 
   return (
