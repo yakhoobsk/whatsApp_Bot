@@ -22,6 +22,7 @@ import { AssistanceGet, DashboardGet, ProvidersGet } from "../../redux/services/
 import { LogoutUser } from "../../redux/services/authService";
 import { useNavigate } from "react-router-dom";
 import AppPagination from "../../components/AppPagination";
+import logo from "../../assets/logocomany.png";
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
@@ -31,7 +32,6 @@ const Dashboard = () => {
     console.log(providers);
     const dashboard = useAppSelector((state) => state.providers?.dashboard || {});
     const assistance = useAppSelector((state) => state.providers?.assistance || {});
-    console.log(assistance);
     const [pagination, setPagination] = useState({ page: 1, limit: 5, });
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -311,7 +311,7 @@ const Dashboard = () => {
             >
                 <Space>
                     <img
-                        src="src\assets\logocomany.png"
+                        src={logo}
                         alt="Logo"
                         style={{
                             width: 40,
