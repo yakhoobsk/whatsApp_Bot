@@ -11,7 +11,7 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { LoginUser, OTPValidation } from "../../redux/services/authService";
 import { useAppDispatch } from "../../redux/hooks";
-
+import logo from "../../assets/logocompany1.png";
 const { Title, Text } = Typography;
 
 const phoneSchema = Yup.object({
@@ -398,6 +398,28 @@ const Login = () => {
                     </Formik>
                 )}
             </Card>
+
+
+            {logo && (
+                <div
+                    style={{
+                        position: "absolute",
+                        top: 24,
+                        left: 24,
+                        zIndex: 1000,
+                    }}
+                >
+                    <img
+                        src={logo}
+                        alt="Logo"
+                        style={{
+                            height: 60,
+                            width: "auto",
+                            objectFit: "contain",
+                        }}
+                    />
+                </div>
+            )}
         </div>
     );
 };
