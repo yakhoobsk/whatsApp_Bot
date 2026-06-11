@@ -8,7 +8,7 @@ export const ProvidersGet = createAsyncThunk(
     async (_: any, { rejectWithValue }) => {
 
         try {
-            const response = await boomiApi.post("/whatsapp_bot/get_service_providers");
+            const response = await boomiApi.post("/whatsappbot/get_technicians_availability/serviceproviders");
             return response.data;
         } catch (error: any) {
             return rejectWithValue(
@@ -24,7 +24,7 @@ export const DashboardGet = createAsyncThunk(
     async (_: any, { rejectWithValue }) => {
 
         try {
-            const response = await boomiApi.get("/whatapp_Bot_Dashboard/whatapp_Dashboard");
+            const response = await boomiApi.get("/whatsappbot/whatsapp_dashboard/whatsapp_dashboard");
             return response.data;
         } catch (error: any) {
             return rejectWithValue(
@@ -40,7 +40,24 @@ export const AssistanceGet = createAsyncThunk(
     async ({ payload, paginations }: { payload: any; paginations: any }, { rejectWithValue }) => {
 
         try {
-            const response = await boomiApi.post(urlGenarator("/whatapp_bot_Assistance_Get/Assistance_Get", paginations), payload);
+            const response = await boomiApi.post(urlGenarator("/whatsappbot/get_assistance_pagenation/get_assistance_pagenation", paginations), payload);
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(
+                error.response?.data?.message || "Fetch failed"
+            );
+        }
+    }
+);
+
+export const ProviderStatusUpdate = createAsyncThunk(
+    "Provider/StatusUpdate",
+    async (payload: any, { rejectWithValue }) => {
+        try {
+            const response = await boomiApi.post(
+                "/whatsappbot/update_technicians/update_technicians_status",
+                payload
+            );
             return response.data;
         } catch (error: any) {
             return rejectWithValue(

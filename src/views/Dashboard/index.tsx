@@ -18,7 +18,7 @@ import {
     SearchOutlined,
 } from "@ant-design/icons";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { AssistanceGet, DashboardGet, ProvidersGet } from "../../redux/services/dashboardServices";
+import { AssistanceGet, DashboardGet, ProvidersGet, ProviderStatusUpdate } from "../../redux/services/dashboardServices";
 import { LogoutUser } from "../../redux/services/authService";
 import { useNavigate } from "react-router-dom";
 import AppPagination from "../../components/AppPagination";
@@ -100,6 +100,8 @@ const Dashboard = () => {
                     item.updated_date,
                 provider_id:
                     item.provider_id || "",
+                Provider:
+                    providers?.[0]?.find((p: any) => p.provider_id === item.provider_id)?.provider_name || item.provider_id || "-",
                 address:
                     item.address || "-",
                 uploaded_media_json:
@@ -132,22 +134,21 @@ const Dashboard = () => {
             console.error("Pagination error:", err);
         }
     };
-    const providerOptions = [
-        {
-            label: "Provider A",
-            value: "Provider A",
-        },
-        {
-            label: "Provider B",
-            value: "Provider B",
-        },
-        {
-            label: "Provider C",
-            value: "Provider C",
-        },
-    ];
+    const providerOptions = providers?.[0]?.map((provider: any) => {
+        const isAvailable = String(provider.is_available).toLowerCase() === "true";
 
-    const updateProvider = (
+        return {
+            label: (
+                <span>
+                    {provider.provider_name} {isAvailable ? "(Idle)" : "(Busy)"}
+                </span>
+            ),
+            value: provider.provider_id,
+            disabled: !isAvailable,
+        };
+    }) || [];
+
+    const updateProvider = async (
         value: string,
         record: any
     ) => {
@@ -161,6 +162,36 @@ const Dashboard = () => {
                     : item
             )
         );
+
+        const selectedProvider = providers?.[0]?.find((p: any) => p.provider_id === value);
+        const selectedIsAvailable = String(selectedProvider?.is_available).toLowerCase() === "true";
+
+        if (selectedProvider && selectedIsAvailable) {
+            const payload = {
+                provider_id: selectedProvider.provider_id,
+                provider_name: selectedProvider.provider_name,
+                current_status: "busy",
+                is_available: "false",
+                request_id: record.request_id,
+            };
+            try {
+                await dispatch(ProviderStatusUpdate(payload)).unwrap();
+                dispatch(ProvidersGet({}));
+                dispatch(
+                    AssistanceGet({
+                        payload: {
+                            search_by_filter: searchFilter,
+                            search: searchText,
+                        },
+                        paginations: pagination,
+                    })
+                );
+            } catch (err) {
+                console.error("Provider update failed:", err);
+            }
+        } else {
+            console.warn("Provider cannot be assigned because is_available is not true.");
+        }
     };
     const handleSearch = async () => {
         try {
@@ -255,24 +286,34 @@ const Dashboard = () => {
         },
         {
             title: "Provider",
-            dataIndex: "provider_id",
+            dataIndex: "Provider",
+            width: 150,
+        },
+        {
+            title: "Provider",
+            dataIndex: "provider_name",
             width: 220,
-            render: (_: any, record: any) => (
-                <Select
-                    placeholder="Assign Provider"
-                    style={{ width: "100%" }}
-                    value={
-                        record.provider_id || undefined
-                    }
-                    options={providerOptions}
-                    onChange={(value) =>
-                        updateProvider(
-                            value,
-                            record
-                        )
-                    }
-                />
-            ),
+            render: (_: any, record: any) => {
+                if (record.provider_id) {
+                    const assignedProvider = providers?.[0]?.find((p: any) => p.provider_id === record.provider_id);
+                    return <span>{assignedProvider?.provider_name || record.Provider || record.provider_name || record.provider_id}</span>;
+                }
+
+                return (
+                    <Select
+                        placeholder="Assign Provider"
+                        style={{ width: "100%" }}
+                        value={record.provider_id || undefined}
+                        options={providerOptions}
+                        onChange={(value) =>
+                            updateProvider(
+                                value,
+                                record
+                            )
+                        }
+                    />
+                );
+            },
         },
     ];
 
@@ -406,7 +447,7 @@ const Dashboard = () => {
                         >
                             <Statistic
                                 title="Busy (providers)"
-                                value={dashboard?.Busy_Providers || 0}
+                                value={dashboard?.Busy_providers || dashboard?.Busy_Providers || 0}
                                 valueStyle={{
                                     color:
                                         "#1677FF",
