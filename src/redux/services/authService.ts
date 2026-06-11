@@ -15,7 +15,7 @@ export const LoginUser = createAsyncThunk(
     ) => {
         try {
             const response = await boomiApi.post(
-                "/whatapp_bot_login/login_otp",
+                "/whatsappbot/login_otp_generation/login_otp_generation",
                 payload
             );
 
@@ -69,7 +69,7 @@ export const OTPValidation = createAsyncThunk(
     ) => {
         try {
             const response = await boomiApi.post(
-                "/whatapp_bot_login_validation/login_validation",
+                "/whatsappbot/login_otp_validation/login_otp_validation",
                 payload
             );
 
@@ -117,7 +117,7 @@ export const LogoutUser = createAsyncThunk(
     async (_: any, { rejectWithValue }
     ) => {
         try {
-            const response = await boomiApi.post("/whatapp_Bot_logout/logout",);
+            const response = await boomiApi.post("/whatsappbot/whatsapp_logout/user_logout",);
             if (response.data.Response_Status === "Failure") {
                 showSnackbar("error", response.data.Status_message || "Logout failed");
             } else if (response.data.Response_Status === "Success") {
