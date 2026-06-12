@@ -24,7 +24,7 @@ export const DashboardGet = createAsyncThunk(
     async (_: any, { rejectWithValue }) => {
 
         try {
-            const response = await boomiApi.get("/whatsappbot/whatsapp_dashboard/whatsapp_dashboard");
+            const response = await boomiApi.post("/whatsappbot/whatsapp_dashboard/whatsapp_dashboard");
             return response.data;
         } catch (error: any) {
             return rejectWithValue(
