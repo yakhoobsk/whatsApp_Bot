@@ -12,6 +12,7 @@ import {
     Tag,
     Select,
     Tooltip,
+    Button,
 } from "antd";
 import {
     LogoutOutlined,
@@ -29,7 +30,6 @@ const { Title } = Typography;
 
 const Dashboard = () => {
     const providers = useAppSelector((state) => state.providers?.providers);
-    console.log(providers);
     const dashboard = useAppSelector((state) => state.providers?.dashboard || {});
     const assistance = useAppSelector((state) => state.providers?.assistance || {});
     const [pagination, setPagination] = useState({ page: 1, limit: 5, });
@@ -380,14 +380,20 @@ const Dashboard = () => {
 
 
                     <Tooltip title="Logout" >
-                        <LogoutOutlined
-                            onClick={() => handleLogout()}
+                        <Button
+                            danger
+                            type="primary"
+                            icon={<LogoutOutlined />}
+                            onClick={handleLogout}
                             style={{
-                                fontSize: 20,
-                                color: "#ff4d4f",
-                                cursor: "pointer",
+                                height: 42,
+                                borderRadius: 10,
+                                fontWeight: 600,
+                                padding: "0 18px",
                             }}
-                        />
+                        >
+                            Logout
+                        </Button>
                     </Tooltip>
                 </Space>
             </Header>
