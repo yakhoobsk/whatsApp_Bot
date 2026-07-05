@@ -22,7 +22,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { AssistanceGet, DashboardGet, ProvidersGet, ProviderStatusUpdate } from "../../redux/services/dashboardServices";
 import { LogoutUser } from "../../redux/services/authService";
 import { useNavigate } from "react-router-dom";
-import AppPagination from "../../components/AppPagination";
+// import AppPagination from "../../components/AppPagination";
 import logo from "../../assets/logocomany.png";
 
 const { Header, Content } = Layout;
@@ -32,7 +32,7 @@ const Dashboard = () => {
     const providers = useAppSelector((state) => state.providers?.providers);
     const dashboard = useAppSelector((state) => state.providers?.dashboard || {});
     const assistance = useAppSelector((state) => state.providers?.assistance || {});
-    const [pagination, setPagination] = useState({ page: 1, limit: 5, });
+    // const [pagination, setPagination] = useState({ page: 1, limit: 10, });
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [searchText, setSearchText] = useState("");
@@ -46,9 +46,9 @@ const Dashboard = () => {
             search_by_filter: searchFilter,
             search: searchText
         }
-        dispatch(AssistanceGet({ payload, paginations: pagination }));
+        dispatch(AssistanceGet({ payload, }));
 
-    }, [dispatch, pagination, searchText, searchFilter]);
+    }, [dispatch, searchText, searchFilter]);
 
     const [dataSource, setDataSource] = useState([
         {
@@ -118,22 +118,22 @@ const Dashboard = () => {
         dispatch(ProvidersGet({}));
     }, [dispatch]);
 
-    const handlePagination = async (page: number, limit: number) => {
-        setPagination({ page, limit });
-        try {
-            await dispatch(
-                AssistanceGet({
-                    payload: {
-                        search_by_filter: "All",
-                        search: ""
-                    },
-                    paginations: { page, limit },
-                })
-            ).unwrap();
-        } catch (err) {
-            console.error("Pagination error:", err);
-        }
-    };
+    // const handlePagination = async (page: number, limit: number) => {
+    //     setPagination({ page, limit });
+    //     try {
+    //         await dispatch(
+    //             AssistanceGet({
+    //                 payload: {
+    //                     search_by_filter: "All",
+    //                     search: ""
+    //                 },
+    //                 paginations: { page, limit },
+    //             })
+    //         ).unwrap();
+    //     } catch (err) {
+    //         console.error("Pagination error:", err);
+    //     }
+    // };
     const providerOptions = providers?.[0]?.map((provider: any) => {
         const isAvailable = String(provider.is_available).toLowerCase() === "true";
 
@@ -183,7 +183,7 @@ const Dashboard = () => {
                             search_by_filter: searchFilter,
                             search: searchText,
                         },
-                        paginations: pagination,
+
                     })
                 );
             } catch (err) {
@@ -202,18 +202,11 @@ const Dashboard = () => {
                             searchFilter,
                         search: searchText,
                     },
-                    paginations: {
-                        page: 1,
-                        limit:
-                            pagination.limit,
-                    },
+
                 })
             ).unwrap();
 
-            setPagination((prev) => ({
-                ...prev,
-                page: 1,
-            }));
+
         } catch (err) {
             console.error(
                 "Search Error:",
@@ -566,10 +559,10 @@ const Dashboard = () => {
                         bordered
                     />
                     <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end" }}>
-                        <AppPagination
+                        {/* <AppPagination
                             totalRecords={assistance?.[0]?.totalResults || 0}
                             onChange={handlePagination}
-                        />
+                        /> */}
                     </div>
                 </Card>
             </Content>

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { boomiApi, urlGenarator } from "./commonAxios";
+import { boomiApi, } from "./commonAxios";
 
 
 
@@ -35,12 +35,27 @@ export const DashboardGet = createAsyncThunk(
 );
 
 
+// export const AssistanceGet = createAsyncThunk(
+//     "Assistance/get",
+//     async ({ payload, paginations }: { payload: any; paginations: any }, { rejectWithValue }) => {
+
+//         try {
+//             const response = await boomiApi.post(urlGenarator("/whatsappbot/get_assistance_pagenation/get_assistance_pagenation", paginations), payload);
+//             return response.data;
+//         } catch (error: any) {
+//             return rejectWithValue(
+//                 error.response?.data?.message || "Fetch failed"
+//             );
+//         }
+//     }
+// );
+
 export const AssistanceGet = createAsyncThunk(
     "Assistance/get",
-    async ({ payload, paginations }: { payload: any; paginations: any }, { rejectWithValue }) => {
+    async ({ payload }: { payload: any; }, { rejectWithValue }) => {
 
         try {
-            const response = await boomiApi.post(urlGenarator("/whatsappbot/get_assistance_pagenation/get_assistance_pagenation", paginations), payload);
+            const response = await boomiApi.post("/whatsappbot/get_assistance_pagenation/get_assistance_pagenation", payload);
             return response.data;
         } catch (error: any) {
             return rejectWithValue(
