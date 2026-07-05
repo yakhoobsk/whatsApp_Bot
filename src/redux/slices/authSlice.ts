@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { LoginUser } from "../services/authService";
 import { removeSecureItem } from "../../utils/webSecureStorage";
+import { OTPValidation } from "../services/authService";
 
 interface AuthState {
     loading: boolean;
@@ -30,17 +30,17 @@ const authSlice = createSlice({
     extraReducers: (builder) => {
         builder
 
-            .addCase(LoginUser.pending, (state) => {
+            .addCase(OTPValidation.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
 
-            .addCase(LoginUser.fulfilled, (state, action) => {
+            .addCase(OTPValidation.fulfilled, (state, action) => {
                 state.loading = false;
                 state.auth = action.payload;
             })
 
-            .addCase(LoginUser.rejected, (state, action: any) => {
+            .addCase(OTPValidation.rejected, (state, action: any) => {
                 state.loading = false;
                 state.error = action.payload;
             });

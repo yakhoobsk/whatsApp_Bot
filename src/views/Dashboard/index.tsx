@@ -312,19 +312,17 @@ const Dashboard = () => {
 
     const handleLogout = async () => {
         try {
-            await dispatch(
-                LogoutUser({})
-            ).unwrap();
+            await dispatch(LogoutUser({})).unwrap();
         } catch (error) {
             console.error(error);
         }
 
-        localStorage.removeItem(
-            "accessToken"
-        );
-        localStorage.removeItem(
-            "persist:auth"
-        );
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("isAuthenticated");
+        localStorage.removeItem("persist:auth");
+        localStorage.removeItem("persist:root");
+
+        sessionStorage.clear();
 
         navigate("/login", {
             replace: true,

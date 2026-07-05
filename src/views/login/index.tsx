@@ -284,31 +284,25 @@ const Login = () => {
                         initialValues={{
                             otp: "",
                         }}
-                        validationSchema={
-                            otpSchema
-                        }
+                        validationSchema={otpSchema}
                         onSubmit={async (values) => {
-                            const payload = {
-                                Phone_no: phoneNumber,
-                                Otp: values.otp,
-                            };
+                            try {
+                                const payload = {
+                                    Phone_no: phoneNumber,
+                                    Otp: values.otp,
+                                };
 
-                            const result: any = await dispatch(
-                                OTPValidation(payload)
-                            );
+                                await dispatch(
+                                    OTPValidation(payload)
+                                ).unwrap();
 
-                            if (
-                                result?.payload?.Responce_Status?.toLowerCase() ===
-                                "succcess"
-                            ) {
-                                localStorage.setItem(
-                                    "accessToken",
-                                    "token"
-                                );
+                                localStorage.setItem("accessToken", "token");
+                                localStorage.setItem("isAuthenticated", "true");
 
-                                navigate("/", {
-                                    replace: true,
-                                });
+                                navigate("/", { replace: true });
+                            } catch (error) {
+                                localStorage.removeItem("accessToken");
+                                localStorage.removeItem("isAuthenticated");
                             }
                         }}
                     >

@@ -48,53 +48,19 @@ function App() {
 
   const cleanPath =
     location.pathname.replace(/\/+$/, "") || "/";
-
-  // Authentication Check
-  const accessToken =
-    localStorage.getItem("accessToken");
-
-  const persistedAuth =
-    localStorage.getItem("persist:auth");
-
-  let authExists = false;
-
-  try {
-    if (persistedAuth) {
-      const parsed = JSON.parse(persistedAuth);
-
-      authExists =
-        !!parsed?.auth &&
-        parsed?.auth !== "null" &&
-        parsed?.auth !== "";
-    }
-  } catch (error) {
-    authExists = false;
-  }
-
+  const accessToken = localStorage.getItem("accessToken");
   const isAuthenticated =
-    !!accessToken && authExists;
+    localStorage.getItem("isAuthenticated") === "true";
 
-  console.log({
-    accessToken,
-    persistedAuth,
-    authExists,
-    isAuthenticated,
-    cleanPath,
-  });
+  const isLoggedIn =
+    !!accessToken && isAuthenticated;
 
-  // Not logged in -> always go to login
-  if (
-    !isAuthenticated &&
-    cleanPath !== "/login"
-  ) {
+
+  if (!isLoggedIn && cleanPath !== "/login") {
     return <Navigate to="/login" replace />;
   }
 
-  // Already logged in -> don't allow login page
-  if (
-    isAuthenticated &&
-    cleanPath === "/login"
-  ) {
+  if (isLoggedIn && cleanPath === "/login") {
     return <Navigate to="/" replace />;
   }
 
