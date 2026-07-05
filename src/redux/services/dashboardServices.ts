@@ -70,7 +70,7 @@ export const ProviderStatusUpdate = createAsyncThunk(
     async (payload: any, { rejectWithValue }) => {
         try {
             const response = await boomiApi.post(
-                "/whatsappbot/update_technicians/update_technicians_status",
+                "/whatsappbot/assitance_request/update_technicians_status",
                 payload
             );
             return response.data;

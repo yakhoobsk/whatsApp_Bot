@@ -148,51 +148,7 @@ const Dashboard = () => {
         };
     }) || [];
 
-    const updateProvider = async (
-        value: string,
-        record: any
-    ) => {
-        setDataSource((prev) =>
-            prev.map((item) =>
-                item.key === record.key
-                    ? {
-                        ...item,
-                        provider_id: value,
-                    }
-                    : item
-            )
-        );
 
-        const selectedProvider = providers?.[0]?.find((p: any) => p.provider_id === value);
-        const selectedIsAvailable = String(selectedProvider?.is_available).toLowerCase() === "true";
-
-        if (selectedProvider && selectedIsAvailable) {
-            const payload = {
-                provider_id: selectedProvider.provider_id,
-                provider_name: selectedProvider.provider_name,
-                current_status: "busy",
-                is_available: "false",
-                request_id: record.request_id,
-            };
-            try {
-                await dispatch(ProviderStatusUpdate(payload)).unwrap();
-                dispatch(ProvidersGet({}));
-                dispatch(
-                    AssistanceGet({
-                        payload: {
-                            search_by_filter: searchFilter,
-                            search: searchText,
-                        },
-
-                    })
-                );
-            } catch (err) {
-                console.error("Provider update failed:", err);
-            }
-        } else {
-            console.warn("Provider cannot be assigned because is_available is not true.");
-        }
-    };
     const handleSearch = async () => {
         try {
             await dispatch(
@@ -327,6 +283,53 @@ const Dashboard = () => {
         navigate("/login", {
             replace: true,
         });
+    };
+
+
+    const updateProvider = async (
+        value: string,
+        record: any
+    ) => {
+        setDataSource((prev) =>
+            prev.map((item) =>
+                item.key === record.key
+                    ? {
+                        ...item,
+                        provider_id: value,
+                    }
+                    : item
+            )
+        );
+
+        const selectedProvider = providers?.[0]?.find((p: any) => p.provider_id === value);
+        const selectedIsAvailable = String(selectedProvider?.is_available).toLowerCase() === "true";
+
+        if (selectedProvider && selectedIsAvailable) {
+            const payload = {
+                provider_id: selectedProvider.provider_id,
+                provider_name: selectedProvider.provider_name,
+                current_status: "busy",
+                is_available: "false",
+                request_id: record.request_id,
+            };
+            try {
+                await dispatch(ProviderStatusUpdate(payload)).unwrap();
+                dispatch(ProvidersGet({}));
+                dispatch(
+                    AssistanceGet({
+                        payload: {
+                            search_by_filter: searchFilter,
+                            search: searchText,
+                        },
+
+                    })
+                );
+            } catch (err) {
+                console.error("Provider update failed:", err);
+            }
+        } else {
+            console.warn("Provider cannot be assigned because is_available is not true.");
+        }
     };
 
     return (
